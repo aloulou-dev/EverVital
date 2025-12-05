@@ -13,10 +13,10 @@ struct ContentView: View {
             if !isAuthenticated {
                 NavigationStack {
                     VStack(spacing: 24) {
-                        Image(systemName: "heart.text.square")
-                            .font(.system(size: 56, weight: .semibold))
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundStyle(.pink)
+                        Image("evervital-logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 112)
                             .padding(.top, 40)
 
                         Text("Welcome to EverVital")

@@ -8,10 +8,10 @@ struct HealthPermissionView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            Image(systemName: "heart.circle.fill")
-                .font(.system(size: 64, weight: .semibold))
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(.red)
+            Image("evervital-logo")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 128)
                 .padding(.top, 40)
             
             Text("Connect Apple Health")
@@ -67,7 +67,10 @@ struct HealthPermissionView: View {
                     viewModel.requestAuthorization()
                 } label: {
                     HStack {
-                        Image(systemName: "heart.fill")
+                        Image("evervital-logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 40)
                         Text("Connect Apple Health")
                     }
                     .frame(maxWidth: .infinity)
@@ -88,8 +91,22 @@ struct HealthPermissionView: View {
             Spacer()
         }
         .padding()
-        .navigationTitle("Health Permissions")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 12) {
+                    Image("evervital-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 44)
+                    Text("Health Permissions")
+                        .font(.title2)
+                        .bold()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, -16)
+            }
+            
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Done") {
                     dismiss()

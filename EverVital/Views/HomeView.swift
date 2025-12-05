@@ -10,10 +10,10 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
-                Image(systemName: "heart.text.square.fill")
-                    .font(.system(size: 64, weight: .semibold))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(.pink)
+                Image("evervital-logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 128)
                     .padding(.top, 40)
                 
                 Text("Welcome to EverVital")
@@ -57,7 +57,14 @@ struct HomeView: View {
                         showHealthKit = true
                     } label: {
                         HStack {
-                            Image(systemName: viewModel.healthKitEnabled ? "checkmark.circle.fill" : "heart.circle.fill")
+                            if viewModel.healthKitEnabled {
+                                Image(systemName: "checkmark.circle.fill")
+                            } else {
+                                Image("evervital-logo")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 48)
+                            }
                             Text(viewModel.healthKitEnabled ? "Health Data Connected" : "Connect Apple Health")
                             Spacer()
                             if viewModel.healthKitEnabled {
@@ -107,7 +114,22 @@ struct HomeView: View {
                 .padding(.horizontal)
                 .padding(.bottom)
             }
-            .navigationTitle("EverVital")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    HStack(spacing: 12) {
+                        Image("evervital-logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 44)
+                        Text("EverVital")
+                            .font(.title2)
+                            .bold()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, -16)
+                }
+            }
             .navigationDestination(isPresented: $showSurvey) {
                 HealthSurveyView(onSaveComplete: {
                     // Reload completion status after survey is saved

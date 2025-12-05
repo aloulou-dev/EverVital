@@ -47,8 +47,22 @@ struct SignOutView: View {
             
             Spacer()
         }
-        .navigationTitle("Sign Out")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 12) {
+                    Image("evervital-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 44)
+                    Text("Sign Out")
+                        .font(.title2)
+                        .bold()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, -16)
+            }
+        }
     }
     
     private func signOut() {

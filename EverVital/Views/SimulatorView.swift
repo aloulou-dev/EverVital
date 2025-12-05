@@ -28,157 +28,169 @@ struct SimulatorView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Bell Curve Graph
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Life Expectancy Distribution")
-                            .font(.title2)
-                            .bold()
-                        
-                        BellCurveSimulatorGraph(
-                            simulatedLifeExpectancy: simulatedLifeExpectancy,
-                            baselineLifeExpectancy: baselineLifeExpectancy
-                        )
-                        .frame(height: 250)
-                        .padding(.vertical, 8)
-                    }
-                    .padding()
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        ScrollView {
+            VStack(spacing: 24) {
+                // Bell Curve Graph
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Life Expectancy Distribution")
+                        .font(.title2)
+                        .bold()
                     
-                    // Simulated Life Expectancy Display
-                    VStack(spacing: 8) {
-                        Text("Simulated Life Expectancy")
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                        
-                        Text(simulatedRange)
-                            .font(.system(size: 36, weight: .bold))
-                            .foregroundStyle(.blue)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                    
-                    // Sliders Section
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text("Adjust Lifestyle Factors")
-                            .font(.title2)
-                            .bold()
-                            .padding(.horizontal)
-                        
-                        // Sleep Hours Slider
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Sleep Hours")
-                                    .font(.headline)
-                                Spacer()
-                                Text("\(sleepHours, specifier: "%.1f") hrs")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Slider(value: $sleepHours, in: 4...10, step: 0.5)
-                                .onChange(of: sleepHours) { _, _ in
-                                    updateSimulation()
-                                }
-                        }
-                        .padding()
-                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        
-                        // Daily Steps Slider
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Daily Steps")
-                                    .font(.headline)
-                                Spacer()
-                                Text("\(Int(dailySteps)) steps")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Slider(value: $dailySteps, in: 0...20000, step: 500)
-                                .onChange(of: dailySteps) { _, _ in
-                                    updateSimulation()
-                                }
-                        }
-                        .padding()
-                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        
-                        // Alcohol Per Week Slider
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Alcohol (units/week)")
-                                    .font(.headline)
-                                Spacer()
-                                Text("\(alcoholPerWeek, specifier: "%.1f") units")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Slider(value: $alcoholPerWeek, in: 0...25, step: 0.5)
-                                .onChange(of: alcoholPerWeek) { _, _ in
-                                    updateSimulation()
-                                }
-                        }
-                        .padding()
-                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        
-                        // Smoking Intensity Slider
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Smoking Intensity")
-                                    .font(.headline)
-                                Spacer()
-                                Text(smokingIntensity == 0 ? "None" : smokingIntensity <= 3 ? "Light" : smokingIntensity <= 7 ? "Moderate" : "Heavy")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Slider(value: $smokingIntensity, in: 0...10, step: 0.5)
-                                .onChange(of: smokingIntensity) { _, _ in
-                                    updateSimulation()
-                                }
-                        }
-                        .padding()
-                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        
-                        // Exercise Days Slider
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Text("Exercise Days/Week")
-                                    .font(.headline)
-                                Spacer()
-                                Text("\(Int(exerciseDays)) days")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Slider(value: $exerciseDays, in: 0...7, step: 1)
-                                .onChange(of: exerciseDays) { _, _ in
-                                    updateSimulation()
-                                }
-                        }
-                        .padding()
-                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                    }
-                    .padding(.horizontal)
-                    
-                    // Reset Button
-                    Button {
-                        resetToBaseline()
-                    } label: {
-                        Text("Reset to Baseline")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                    }
-                    .buttonStyle(.bordered)
-                    .tint(.blue)
-                    .padding(.horizontal)
+                    BellCurveSimulatorGraph(
+                        simulatedLifeExpectancy: simulatedLifeExpectancy,
+                        baselineLifeExpectancy: baselineLifeExpectancy
+                    )
+                    .frame(height: 250)
+                    .padding(.vertical, 8)
                 }
-                .padding(.vertical)
+                .padding()
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                
+                // Simulated Life Expectancy Display
+                VStack(spacing: 8) {
+                    Text("Simulated Life Expectancy")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                    
+                    Text(simulatedRange)
+                        .font(.system(size: 36, weight: .bold))
+                        .foregroundStyle(.blue)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                
+                // Sliders Section
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Adjust Lifestyle Factors")
+                        .font(.title2)
+                        .bold()
+                        .padding(.horizontal)
+                    
+                    // Sleep Hours Slider
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Sleep Hours")
+                                .font(.headline)
+                            Spacer()
+                            Text("\(sleepHours, specifier: "%.1f") hrs")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Slider(value: $sleepHours, in: 4...10, step: 0.5)
+                            .onChange(of: sleepHours) { _, _ in
+                                updateSimulation()
+                            }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    
+                    // Daily Steps Slider
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Daily Steps")
+                                .font(.headline)
+                            Spacer()
+                            Text("\(Int(dailySteps)) steps")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Slider(value: $dailySteps, in: 0...20000, step: 500)
+                            .onChange(of: dailySteps) { _, _ in
+                                updateSimulation()
+                            }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    
+                    // Alcohol Per Week Slider
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Alcohol (units/week)")
+                                .font(.headline)
+                            Spacer()
+                            Text("\(alcoholPerWeek, specifier: "%.1f") units")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Slider(value: $alcoholPerWeek, in: 0...25, step: 0.5)
+                            .onChange(of: alcoholPerWeek) { _, _ in
+                                updateSimulation()
+                            }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    
+                    // Smoking Intensity Slider
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Smoking Intensity")
+                                .font(.headline)
+                            Spacer()
+                            Text(smokingIntensity == 0 ? "None" : smokingIntensity <= 3 ? "Light" : smokingIntensity <= 7 ? "Moderate" : "Heavy")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Slider(value: $smokingIntensity, in: 0...10, step: 0.5)
+                            .onChange(of: smokingIntensity) { _, _ in
+                                updateSimulation()
+                            }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    
+                    // Exercise Days Slider
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("Exercise Days/Week")
+                                .font(.headline)
+                            Spacer()
+                            Text("\(Int(exerciseDays)) days")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        Slider(value: $exerciseDays, in: 0...7, step: 1)
+                            .onChange(of: exerciseDays) { _, _ in
+                                updateSimulation()
+                            }
+                    }
+                    .padding()
+                    .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                }
+                .padding(.horizontal)
+                
+                // Reset Button
+                Button {
+                    resetToBaseline()
+                } label: {
+                    Text("Reset to Baseline")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                }
+                .buttonStyle(.bordered)
+                .tint(.blue)
+                .padding(.horizontal)
             }
-            .navigationTitle("Life Expectancy Simulator")
-            .navigationBarTitleDisplayMode(.inline)
-            .onAppear {
-                updateSimulation()
+            .padding(.vertical)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 12) {
+                    Image("evervital-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 44)
+                    Text("Life Expectancy Simulator")
+                        .font(.title2)
+                        .bold()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, -16)
             }
+        }
+        .onAppear {
+            updateSimulation()
         }
     }
     

@@ -17,9 +17,22 @@
 		927EA3F72EDFDADA003997D4 /* EverVital.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EverVital.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		924C20722EE2A3D000FAC8C9 /* Exceptions for "EverVital" folder in "EverVital" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 927EA3F62EDFDADA003997D4 /* EverVital */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		927EA3F92EDFDADA003997D4 /* EverVital */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				924C20722EE2A3D000FAC8C9 /* Exceptions for "EverVital" folder in "EverVital" target */,
+			);
 			path = EverVital;
 			sourceTree = "<group>";
 		};
@@ -275,10 +288,10 @@
 				DEVELOPMENT_TEAM = 8R7CP7UY2P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EverVital/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your step count, heart rate, and sleep data to calculate your life expectancy and provide personalized health recommendations.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -309,10 +322,10 @@
 				DEVELOPMENT_TEAM = 8R7CP7UY2P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EverVital/Info.plist;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We need access to your step count, heart rate, and sleep data to calculate your life expectancy and provide personalized health recommendations.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

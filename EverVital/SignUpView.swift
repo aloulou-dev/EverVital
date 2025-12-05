@@ -69,7 +69,22 @@ struct SignUpView: View {
             .disabled(buttonsDisabled || isLoading)
             .opacity((buttonsDisabled || isLoading) ? 0.6 : 1.0)
         }
-        .navigationTitle("Create Account")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 12) {
+                    Image("evervital-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 44)
+                    Text("Create Account")
+                        .font(.title2)
+                        .bold()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, -16)
+            }
+        }
         .alert(alertMessage, isPresented: $showingAlert) {
             Button("OK", role: .cancel) {}
         }

@@ -54,6 +54,22 @@ struct SimulatorContainerView: View {
                 .padding()
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 12) {
+                    Image("evervital-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 44)
+                    Text("Life Expectancy Simulator")
+                        .font(.title2)
+                        .bold()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, -16)
+            }
+        }
         .onAppear {
             loadSimulatorData()
         }

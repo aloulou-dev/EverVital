@@ -107,9 +107,22 @@ class HealthKitViewModel {
                 var totalSleep: TimeInterval = 0
                 if let samples = samples {
                     for sample in samples {
-                        if let categorySample = sample as? HKCategorySample,
-                           categorySample.value == HKCategoryValueSleepAnalysis.HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue {
-                            totalSleep += sample.endDate.timeIntervalSince(sample.startDate)
+                        if let categorySample = sample as? HKCategorySample {
+                            let value = categorySample.value
+                            if #available(iOS 16.0, *) {
+                                // Sum all asleep categories (core, deep, REM, unspecified)
+                                if value == HKCategoryValueSleepAnalysis.asleepCore.rawValue ||
+                                   value == HKCategoryValueSleepAnalysis.asleepDeep.rawValue ||
+                                   value == HKCategoryValueSleepAnalysis.asleepREM.rawValue ||
+                                   value == HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue {
+                                    totalSleep += categorySample.endDate.timeIntervalSince(categorySample.startDate)
+                                }
+                            } else {
+                                // Fallback for older iOS versions
+                                if value == HKCategoryValueSleepAnalysis.asleep.rawValue {
+                                    totalSleep += categorySample.endDate.timeIntervalSince(categorySample.startDate)
+                                }
+                            }
                         }
                     }
                 }

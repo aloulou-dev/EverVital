@@ -325,8 +325,22 @@ struct HealthSurveyView: View {
                     }
                 }
         }
-        .navigationTitle("Health Survey")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 12) {
+                    Image("evervital-logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 44)
+                    Text("Health Survey")
+                        .font(.title2)
+                        .bold()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, -16)
+            }
+            
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Save") {
                     viewModel.saveSurveyData()

@@ -165,7 +165,14 @@ struct DashboardView: View {
                                 showHealthKit = true
                             } label: {
                                 HStack {
-                                    Image(systemName: healthKitEnabled ? "checkmark.circle.fill" : "heart.circle.fill")
+                                    if healthKitEnabled {
+                                        Image(systemName: "checkmark.circle.fill")
+                                    } else {
+                                        Image("evervital-logo")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(height: 48)
+                                    }
                                     Text(healthKitEnabled ? "Manage Health Data" : "Connect Health Data")
                                     Spacer()
                                 }
@@ -188,9 +195,23 @@ struct DashboardView: View {
                     }
                     .padding()
                 }
-                .navigationTitle("Dashboard")
                 .navigationBarBackButtonHidden(true)
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 12) {
+                            Image("evervital-logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 44)
+                            Text("Dashboard")
+                                .font(.title2)
+                                .bold()
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, -16)
+                    }
+                    
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             showSignOut = true
