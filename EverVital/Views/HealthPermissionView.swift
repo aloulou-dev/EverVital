@@ -5,6 +5,7 @@ import FirebaseFirestore
 struct HealthPermissionView: View {
     @State private var viewModel = HealthKitViewModel()
     @Environment(\.dismiss) var dismiss
+    var onDismiss: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 24) {
@@ -59,7 +60,7 @@ struct HealthPermissionView: View {
                         }
                     }
                 }
-                .onChange(of: viewModel.isLoading) { oldValue, newValue in
+                .onChange(of: viewModel.isLoading) { _, newValue in
                     // When loading finishes, don't auto-dismiss - let user choose to disconnect or go back
                 }
             } else {
@@ -92,6 +93,7 @@ struct HealthPermissionView: View {
         }
         .padding()
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 12) {
@@ -107,11 +109,24 @@ struct HealthPermissionView: View {
                 .padding(.leading, -16)
             }
             
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Done") {
-                    dismiss()
-                }
-            }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            onDismiss?()
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                        }
+                    }
+            
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            onDismiss?()
+                            dismiss()
+                        }
+                    }
         }
     }
     

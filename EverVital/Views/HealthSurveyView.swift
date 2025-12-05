@@ -2,9 +2,9 @@ import SwiftUI
 
 struct HealthSurveyView: View {
     @State private var viewModel = HealthSurveyViewModel()
-    @State private var showSuccess = false
     @Environment(\.dismiss) var dismiss
     var onSaveComplete: (() -> Void)? = nil
+    var onDismiss: (() -> Void)? = nil
     
     var body: some View {
         Form {
@@ -326,6 +326,7 @@ struct HealthSurveyView: View {
                 }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 12) {
@@ -341,6 +342,18 @@ struct HealthSurveyView: View {
                 .padding(.leading, -16)
             }
             
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            onDismiss?()
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                        }
+                    }
+            
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Save") {
                     viewModel.saveSurveyData()
@@ -354,7 +367,8 @@ struct HealthSurveyView: View {
         )) {
             Button("OK", role: .cancel) { 
                 onSaveComplete?()
-                dismiss() // Navigate back to HomeView
+                onDismiss?()
+                dismiss() // Navigate back to DashboardView
             }
         } message: {
             Text("Your health survey has been saved successfully.")

@@ -46,7 +46,7 @@ struct ContentView: View {
                 DashboardView(onSignOut: {
                     handleSignOut()
                 })
-                .id("dashboard-\(viewKey)")
+                .id("dashboard-\(isAuthenticated)-\(startupViewModel.shouldShowDashboard)")
             } else {
                 HomeView()
                 .id("home-\(viewKey)")

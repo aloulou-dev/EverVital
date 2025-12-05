@@ -65,21 +65,68 @@ class HealthKitViewModel {
         var heartRate: Double = 0
         var sleepHours: Double = 0
         
-        // Read step count
+        // Read step count - 7-day average (fallback to 30-day, then today)
         if let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount) {
             group.enter()
             let calendar = Calendar.current
             let now = Date()
-            let startOfDay = calendar.startOfDay(for: now)
-            let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
             
-            let query = HKStatisticsQuery(quantityType: stepType, quantitySamplePredicate: predicate, options: .cumulativeSum) { (_, result, error) in
-                if let sum = result?.sumQuantity() {
-                    steps = Int(sum.doubleValue(for: HKUnit.count()))
+            // Helper function to try queries in sequence
+            func try7DayAverage() {
+                let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: now) ?? now
+                let predicate7Day = HKQuery.predicateForSamples(withStart: sevenDaysAgo, end: now, options: .strictStartDate)
+                
+                let query7Day = HKStatisticsQuery(quantityType: stepType, quantitySamplePredicate: predicate7Day, options: .cumulativeSum) { (_, result, error) in
+                    if let sum = result?.sumQuantity() {
+                        let totalSteps = Int(sum.doubleValue(for: HKUnit.count()))
+                        if totalSteps > 0 {
+                            // Calculate average (divide by 7)
+                            steps = totalSteps / 7
+                            group.leave()
+                            return
+                        }
+                    }
+                    // Fallback to 30-day
+                    try30DayAverage()
                 }
-                group.leave()
+                healthStore.execute(query7Day)
             }
-            healthStore.execute(query)
+            
+            func try30DayAverage() {
+                let thirtyDaysAgo = calendar.date(byAdding: .day, value: -30, to: now) ?? now
+                let predicate30Day = HKQuery.predicateForSamples(withStart: thirtyDaysAgo, end: now, options: .strictStartDate)
+                
+                let query30Day = HKStatisticsQuery(quantityType: stepType, quantitySamplePredicate: predicate30Day, options: .cumulativeSum) { (_, result, error) in
+                    if let sum = result?.sumQuantity() {
+                        let totalSteps = Int(sum.doubleValue(for: HKUnit.count()))
+                        if totalSteps > 0 {
+                            // Calculate average (divide by 30)
+                            steps = totalSteps / 30
+                            group.leave()
+                            return
+                        }
+                    }
+                    // Fallback to today
+                    tryTodaySteps()
+                }
+                healthStore.execute(query30Day)
+            }
+            
+            func tryTodaySteps() {
+                let startOfDay = calendar.startOfDay(for: now)
+                let predicateToday = HKQuery.predicateForSamples(withStart: startOfDay, end: now, options: .strictStartDate)
+                
+                let queryToday = HKStatisticsQuery(quantityType: stepType, quantitySamplePredicate: predicateToday, options: .cumulativeSum) { (_, result, error) in
+                    if let sum = result?.sumQuantity() {
+                        steps = Int(sum.doubleValue(for: HKUnit.count()))
+                    }
+                    group.leave()
+                }
+                healthStore.execute(queryToday)
+            }
+            
+            // Start with 7-day average
+            try7DayAverage()
         }
         
         // Read heart rate (most recent)
@@ -133,7 +180,9 @@ class HealthKitViewModel {
         }
         
         group.notify(queue: .main) {
-            self.saveHealthKitData(steps: steps, heartRate: heartRate, sleepHours: sleepHours)
+            // Only save sleep hours if > 0 (valid data)
+            let validSleepHours = sleepHours > 0 ? sleepHours : 0
+            self.saveHealthKitData(steps: steps, heartRate: heartRate, sleepHours: validSleepHours)
         }
     }
     

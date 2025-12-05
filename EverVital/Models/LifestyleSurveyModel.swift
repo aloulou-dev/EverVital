@@ -21,7 +21,13 @@ struct LifestyleSurveyModel {
     
     // Helper to create from UserHealthData and HealthKit data
     static func from(userData: UserHealthData, healthKitSteps: Int? = nil, healthKitSleep: Double? = nil) -> LifestyleSurveyModel {
-        let sleep = healthKitSleep ?? userData.sleepHours ?? 7.0
+        // Only use HealthKit sleep if > 0 and valid, otherwise use manual entry or default
+        let sleep: Double
+        if let hkSleep = healthKitSleep, hkSleep > 0 {
+            sleep = hkSleep
+        } else {
+            sleep = userData.sleepHours ?? 7.0
+        }
         let steps = healthKitSteps ?? userData.appleSteps ?? 5000
         
         // Convert smoking preset to intensity (0-10)

@@ -6,6 +6,7 @@ struct SignOutView: View {
     @State private var isSigningOut = false
     
     var onSignOut: () -> Void
+    var onDismiss: (() -> Void)? = nil
     
     var body: some View {
         VStack(spacing: 24) {
@@ -48,6 +49,7 @@ struct SignOutView: View {
             Spacer()
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 12) {
@@ -62,6 +64,18 @@ struct SignOutView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, -16)
             }
+            
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            onDismiss?()
+                            dismiss()
+                        } label: {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                        }
+                    }
         }
     }
     

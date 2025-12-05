@@ -7,6 +7,7 @@ import Observation
 class HomeViewModel {
     var surveyCompleted = false
     var healthKitEnabled = false
+    var lifeExpectancyExists = false
     var isLoading = false
     
     private var db: Firestore {
@@ -32,6 +33,7 @@ class HomeViewModel {
                     await MainActor.run {
                         self.surveyCompleted = false
                         self.healthKitEnabled = false
+                        self.lifeExpectancyExists = false
                         self.isLoading = false
                     }
                     return
@@ -40,6 +42,7 @@ class HomeViewModel {
                 await MainActor.run {
                     self.surveyCompleted = data["surveyCompleted"] as? Bool ?? false
                     self.healthKitEnabled = data["healthKitEnabled"] as? Bool ?? false
+                    self.lifeExpectancyExists = (data["lifeExpectancy"] as? [String: Any]) != nil
                     self.isLoading = false
                 }
             } catch {

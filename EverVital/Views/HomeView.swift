@@ -1,11 +1,13 @@
 import SwiftUI
-import Combine
 import FirebaseAuth
 
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
     @State private var showSurvey = false
     @State private var showHealthKit = false
+    @State private var showDashboard = false
+    @State private var isCalculating = false
+    @State private var lifeExpectancyViewModel = LifeExpectancyViewModel()
     
     var body: some View {
         NavigationStack {
@@ -84,15 +86,48 @@ struct HomeView: View {
                         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
                     }
                     
-                    NavigationLink(destination: DashboardView()) {
-                        HStack {
-                            Image(systemName: "chart.line.uptrend.xyaxis")
-                            Text("View Dashboard")
-                            Spacer()
-                            Image(systemName: "chevron.right")
+                    // Show "Calculate Life Expectancy" if no life expectancy exists, otherwise show "View Dashboard"
+                    if !viewModel.lifeExpectancyExists {
+                        Button {
+                            calculateAndNavigate()
+                        } label: {
+                            HStack {
+                                if isCalculating {
+                                    ProgressView()
+                                        .progressViewStyle(.circular)
+                                        .tint(.white)
+                                } else {
+                                    Image(systemName: "chart.line.uptrend.xyaxis")
+                                }
+                                Text(isCalculating ? "Calculating..." : "Calculate Life Expectancy")
+                                Spacer()
+                                if !isCalculating {
+                                    Image(systemName: "chevron.right")
+                                }
+                            }
+                            .padding()
+                            .foregroundStyle(isCalculating ? .white : .primary)
+                            .background(
+                                isCalculating
+                                    ? Color.blue.opacity(0.8)
+                                    : Color.clear
+                            )
+                            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
                         }
-                        .padding()
-                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        .disabled(isCalculating)
+                    } else {
+                        Button {
+                            showDashboard = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "chart.line.uptrend.xyaxis")
+                                Text("View Dashboard")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                            .padding()
+                            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -143,6 +178,9 @@ struct HomeView: View {
                         viewModel.loadCompletionStatus()
                     }
             }
+            .navigationDestination(isPresented: $showDashboard) {
+                DashboardView()
+            }
             .onAppear {
                 viewModel.loadCompletionStatus()
             }
@@ -150,7 +188,28 @@ struct HomeView: View {
                 // Reload completion status when HealthKit data is updated
                 viewModel.loadCompletionStatus()
             }
+            .onChange(of: lifeExpectancyViewModel.didSaveSuccessfully) { _, newValue in
+                if newValue {
+                    // Calculation completed successfully, update status and navigate
+                    viewModel.loadCompletionStatus()
+                    showDashboard = true
+                    isCalculating = false
+                }
+            }
+            .onChange(of: lifeExpectancyViewModel.errorMessage) { _, newValue in
+                if newValue != nil {
+                    // Error occurred, stop calculating
+                    isCalculating = false
+                }
+            }
         }
+    }
+    
+    private func calculateAndNavigate() {
+        guard !isCalculating else { return }
+        isCalculating = true
+        lifeExpectancyViewModel.didSaveSuccessfully = false // Reset flag
+        lifeExpectancyViewModel.calculateLifeExpectancy()
     }
 }
 

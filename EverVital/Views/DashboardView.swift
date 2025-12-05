@@ -1,6 +1,5 @@
 import SwiftUI
 import Charts
-import Combine
 import FirebaseAuth
 import FirebaseFirestore
 
@@ -221,26 +220,46 @@ struct DashboardView: View {
                     }
                 }
                 .navigationDestination(isPresented: $showSurvey) {
-                    HealthSurveyView(onSaveComplete: {
-                        // After saving survey, recalculate life expectancy and health score
-                        recalculateLifeExpectancy()
-                        Task {
-                            await recalculateHealthScore()
+                    HealthSurveyView(
+                        onSaveComplete: {
+                            // After saving survey, recalculate life expectancy and health score
+                            recalculateLifeExpectancy()
+                            Task {
+                                await recalculateHealthScore()
+                            }
+                            showSurvey = false
+                        },
+                        onDismiss: {
+                            showSurvey = false
                         }
-                    })
+                    )
                 }
                 .navigationDestination(isPresented: $showHealthKit) {
-                    HealthPermissionView()
-                        .onAppear {
-                            // Reload HealthKit status when returning
+                    HealthPermissionView(
+                        onDismiss: {
+                            showHealthKit = false
                             loadHealthKitStatus()
                         }
+                    )
+                    .onAppear {
+                        // Reload HealthKit status when returning
+                        loadHealthKitStatus()
+                    }
                 }
                 .navigationDestination(isPresented: $showSimulator) {
-                    SimulatorContainerView()
+                    SimulatorContainerView(
+                        onDismiss: {
+                            showSimulator = false
+                        }
+                    )
                 }
                 .navigationDestination(isPresented: $showSignOut) {
-                    SignOutView(onSignOut: onSignOut)
+                    SignOutView(
+                        onSignOut: onSignOut,
+                        onDismiss: {
+                            showSignOut = false
+                        }
+                    )
                 }
             }
         }
@@ -277,9 +296,18 @@ struct DashboardView: View {
             
             // Get survey data
             var userHealthData = UserHealthData()
+            var weightLb: Double?
+            var heightFeet: Int?
+            var heightInches: Int?
+            
             if let surveyData = data["surveyData"] as? [String: Any] {
                 let jsonData = try JSONSerialization.data(withJSONObject: surveyData)
                 userHealthData = try JSONDecoder().decode(UserHealthData.self, from: jsonData)
+                
+                // Extract Imperial units
+                weightLb = surveyData["weightLb"] as? Double
+                heightFeet = surveyData["heightFeet"] as? Int
+                heightInches = surveyData["heightInches"] as? Int
             }
             
             // Get HealthKit data
@@ -288,7 +316,10 @@ struct DashboardView: View {
             // Calculate score
             let score = healthScoreViewModel.calculateHealthScore(
                 from: userHealthData,
-                healthKitData: healthKitData
+                healthKitData: healthKitData,
+                weightLb: weightLb,
+                heightFeet: heightFeet,
+                heightInches: heightInches
             )
             
             // Save score

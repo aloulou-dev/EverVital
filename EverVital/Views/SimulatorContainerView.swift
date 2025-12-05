@@ -3,6 +3,9 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct SimulatorContainerView: View {
+    @Environment(\.dismiss) var dismiss
+    var onDismiss: (() -> Void)? = nil
+    
     @State private var isLoading = true
     @State private var errorMessage: String?
     @State private var baselineLifeExpectancy: Double?
@@ -55,6 +58,7 @@ struct SimulatorContainerView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 HStack(spacing: 12) {
@@ -68,6 +72,18 @@ struct SimulatorContainerView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, -16)
+            }
+            
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    onDismiss?()
+                    dismiss()
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                }
             }
         }
         .onAppear {

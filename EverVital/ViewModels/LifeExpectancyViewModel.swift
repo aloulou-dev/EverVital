@@ -69,18 +69,19 @@ class LifeExpectancyViewModel {
             combinedData.merge(survey) { (_, new) in new }
         }
         
-        if let healthKit = healthKitData {
-            // Only include the health metrics, not the timestamp
-            if let steps = healthKit["appleSteps"] as? Int {
-                combinedData["appleSteps"] = steps
+            if let healthKit = healthKitData {
+                // Only include the health metrics, not the timestamp
+                if let steps = healthKit["appleSteps"] as? Int {
+                    combinedData["appleSteps"] = steps
+                }
+                if let heartRate = healthKit["appleHeartRate"] as? Double {
+                    combinedData["appleHeartRate"] = heartRate
+                }
+                // Only include HealthKit sleep if > 0 and valid
+                if let sleep = healthKit["appleSleepHours"] as? Double, sleep > 0 {
+                    combinedData["appleSleepHours"] = sleep
+                }
             }
-            if let heartRate = healthKit["appleHeartRate"] as? Double {
-                combinedData["appleHeartRate"] = heartRate
-            }
-            if let sleep = healthKit["appleSleepHours"] as? Double {
-                combinedData["appleSleepHours"] = sleep
-            }
-        }
         
         // Add additional info if provided
         if !additionalInfo.isEmpty {

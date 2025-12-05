@@ -19,12 +19,12 @@ class HealthScoreViewModel {
     }
     
     // Calculate health score from user data
-    func calculateHealthScore(from userData: UserHealthData, healthKitData: [String: Any]?) -> Int {
+    func calculateHealthScore(from userData: UserHealthData, healthKitData: [String: Any]?, weightLb: Double?, heightFeet: Int?, heightInches: Int?) -> Int {
         var totalScore: Double = 0.0
         var totalWeight: Double = 0.0
         
         // BMI Score (20%)
-        if let bmiScore = calculateBMIScore(weight: userData.weight, height: userData.height) {
+        if let bmiScore = calculateBMIScore(weightLb: weightLb, heightFeet: heightFeet, heightInches: heightInches) {
             totalScore += Double(bmiScore) * 0.20
             totalWeight += 0.20
         }
@@ -57,9 +57,12 @@ class HealthScoreViewModel {
         }
         
         // Sleep Score (10%)
+        // Only use HealthKit sleep if > 0 and valid, otherwise use manual entry
+        let healthKitSleepValue = healthKitData?["appleSleepHours"] as? Double
+        let effectiveHealthKitSleep = (healthKitSleepValue != nil && healthKitSleepValue! > 0) ? healthKitSleepValue : nil
         if let sleepScore = calculateSleepScore(
             surveySleep: userData.sleepHours,
-            healthKitSleep: healthKitData?["appleSleepHours"] as? Double ?? userData.appleSleepHours
+            healthKitSleep: effectiveHealthKitSleep
         ) {
             totalScore += Double(sleepScore) * 0.10
             totalWeight += 0.10
@@ -81,13 +84,17 @@ class HealthScoreViewModel {
     }
     
     // BMI Score: 0-100 (optimal BMI is 18.5-24.9)
-    private func calculateBMIScore(weight: Double?, height: Double?) -> Int? {
-        guard let weight = weight, let height = height, height > 0, weight > 0 else {
+    private func calculateBMIScore(weightLb: Double?, heightFeet: Int?, heightInches: Int?) -> Int? {
+        guard let weightLb = weightLb, let heightFeet = heightFeet, let heightInches = heightInches,
+              weightLb > 0, heightFeet > 0 || heightInches > 0 else {
             return nil
         }
         
-        let heightInMeters = height / 100.0 // Convert cm to meters
-        let bmi = weight / (heightInMeters * heightInMeters)
+        let totalInches = Double(heightFeet * 12 + heightInches)
+        guard totalInches > 0 else { return nil }
+        
+        // BMI formula for Imperial units: (weight in pounds / (height in inches)^2) * 703
+        let bmi = (weightLb / (totalInches * totalInches)) * 703
         
         // Optimal BMI range: 18.5-24.9 = 100 points
         // Underweight (<18.5) or Overweight (>24.9) = decreasing score
