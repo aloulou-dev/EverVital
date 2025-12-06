@@ -17,3 +17,4 @@ struct ImpactModel: Codable {
     )
 }
 
+
